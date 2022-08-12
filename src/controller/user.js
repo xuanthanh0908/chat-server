@@ -43,6 +43,15 @@ export const getUser = async (req, res, next) => {
     next(error)
   }
 }
+export const friends = async (req, res, next) => {
+  try {
+    const user = await User.find()
+    const { password, ...rest } = user._doc
+    res.status(200).json(rest)
+  } catch (error) {
+    next(error)
+  }
+}
 export const allUser = async (req, res, next) => {
   try {
     const userId = req.params.id
