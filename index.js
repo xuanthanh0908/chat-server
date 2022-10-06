@@ -55,9 +55,17 @@ const io = new Server(server, {
 global.onlineUsers = new Map()
 
 io.on('connection', (socket) => {
+  console.log(onlineUsers)
   global.chatSocket = socket
   socket.on('add-user', (userId) => {
     onlineUsers.set(userId, socket.id)
+  })
+  socket.on('getall', () => {
+    const list = []
+    for (const [key, value] of onlineUsers) {
+      list.push(key)
+    }
+    socket.emit('useronline', list)
   })
   socket.on('send-msg', (data) => {
     // console.log(onlineUsers)
