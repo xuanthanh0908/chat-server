@@ -1,5 +1,5 @@
 import express from 'express'
-import dotenv from 'dotenv'
+import dotenv, { config } from 'dotenv'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
@@ -8,6 +8,7 @@ import authRoutes from './src/routes/user.js'
 import messageRoutes from './src/routes/message.js'
 import { connectDB } from './src/connection/connect.js'
 import { Server } from 'socket.io'
+
 const app = express()
 // config file env
 dotenv.config({ path: '.env' })
@@ -47,7 +48,7 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_ENDPOINT,
+    origin: 'http:localhost:3000',
   },
 })
 
@@ -59,11 +60,14 @@ io.on('connection', (socket) => {
     onlineUsers.set(userId, socket.id)
   })
   socket.on('send-msg', (data) => {
-    console.log(onlineUsers)
+    // console.log(onlineUsers)
     const isOnline = onlineUsers.get(data.to)
     // console.log(isOnline)
     if (isOnline) {
       socket.to(isOnline).emit('msg-recieve', data.msg)
     }
+  })
+  socket.on('disconnect', () => {
+    socket.broadcast.emit('disconnected')
   })
 })

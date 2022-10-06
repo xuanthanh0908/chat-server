@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import { generateTokens } from '../service/genarateToken.js'
 import { verifyRefreshToken } from '../service/verifyRefreshToken.js'
 import jwt from 'jsonwebtoken'
+
 export const Login = async (req, res, next) => {
   try {
     const user = await User.findOne({ username: req.body.username })
@@ -37,15 +38,6 @@ export const getUser = async (req, res, next) => {
     const userId = req.params.id
     const user = await User.findById(userId)
     if (!user) return next(createError(501, 'User not found !!'))
-    const { password, ...rest } = user._doc
-    res.status(200).json(rest)
-  } catch (error) {
-    next(error)
-  }
-}
-export const friends = async (req, res, next) => {
-  try {
-    const user = await User.find()
     const { password, ...rest } = user._doc
     res.status(200).json(rest)
   } catch (error) {
